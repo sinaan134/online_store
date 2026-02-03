@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h3 class="mb-4">🛒 Shopping Cart</h3>
+    
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end"></div>
+        <a href="{% url 'home' %}" class="btn btn-primary">
+        <i class="bi bi-cart-plus"></i> Add More Products
+        </a>
+    </div>
+
+
+    {% if items %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th width="120">Price</th>
+                        <th width="150">Quantity</th>
+                        <th width="120">Subtotal</th>
+                        <th width="100">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item.product.image.url }}"
+                                     class="rounded border me-2"
+                                     width="60" height="60"
+                                     style="object-fit: cover;">
+                                <strong>{{ item.product.name }}</strong>
+                            </div>
+                        </td>
+
+                        <td>₹{{ item.product.price }}</td>
+
+                        <td>
+                            <form method="POST"
+                                  action="{% url 'update_cart_quantity' item.id %}">
+                                {% csrf_token %}
+                                <input type="number"
+                                       name="quantity"
+                                       value="{{ item.quantity }}"
+                                       min="1"
+                                       class="form-control form-control-sm mb-1">
+                                <button class="btn btn-sm btn-outline-primary w-100">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+
+                        <td>₹{{ item.total_price }}</td>
+
+                        <td>
+                            <a href="{% url 'remove_from_cart' item.id %}"
+                               class="btn btn-sm btn-danger w-100">
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="row align-items-center mt-4">
+
+                
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        ← Back to Products
+                    </a>
+
+                    <a href="{% url 'orders:order_list' %}"
+                       class="btn btn-outline-dark ms-2">
+                        📦 My Orders
+                    </a>
+                </div>
+
+                <div class="col-md-6 text-end">
+                    <h5 class="mb-3">
+                        Total Amount:
+                        <span class="text-success fw-bold">
+                            ₹{{ total }}
+                        </span>
+                    </h5>
+
+                    <form method="POST"
+                          action="{% url 'orders:create_order' %}"
+                          class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="payment_method" value="cod">
+                        <button type="submit"
+                                class="btn btn-outline-dark me-2 px-4">
+                            Cash on Delivery
+                        </button>
+                    </form>
+
+                  
+                    <form method="POST"
+                          action="{% url 'orders:create_order' %}"
+                          class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="payment_method" value="stripe">
+                        <button type="submit"
+                                class="btn btn-success px-4">
+                            Pay with Stripe 💳
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% else %}
+   
+    <div class="alert alert-info text-center">
+        <h5>Your cart is empty 🛍️</h5>
+        <a href="{% url 'home' %}" class="btn btn-primary mt-2">
+            Continue Shopping
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

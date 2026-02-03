@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Login | MyShop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4">
+
+                <h3 class="text-center mb-4 fw-semibold">
+                    Welcome Back
+                </h3>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Invalid username or password
+                    </div>
+                {% endif %}
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Username</label>
+                        <input type="text" name="username"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Password</label>
+                        <input type="password" name="password"
+                               class="form-control"
+                               required>
+                    </div>
+
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-dark btn-lg">
+                            Login
+                        </button>
+                    </div>
+                </form>
+
+                <p class="text-center mt-4 mb-0">
+                    Don't have an account?
+                    <a href="{% url 'signup' %}" class="fw-medium">
+                        Sign up
+                    </a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

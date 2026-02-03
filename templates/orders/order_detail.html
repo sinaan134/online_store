@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1">Order #{{ order.id }}</h3>
+            <small class="text-muted">
+                Payment Method:
+                <strong>{{ order.get_payment_method_display }}</strong>
+            </small>
+        </div>
+
+        {% if order.is_paid %}
+            <span class="badge bg-success px-3 py-2 fs-6">Paid</span>
+        {% else %}
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6">
+                Pending Payment
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <strong>Order Items</strong>
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Product</th>
+                        <th width="120">Quantity</th>
+                        <th width="150">Price</th>
+                        <th width="150">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.price }}</td>
+                        <td>₹{{ item.total_price }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No items found in this order.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer text-end bg-light">
+            <h5 class="mb-0">
+                Total Amount:
+                <strong class="text-dark">₹{{ order.total_price }}</strong>
+            </h5>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <a href="{% url 'orders:order_list' %}" class="btn btn-outline-secondary">
+            ← Back to Orders
+        </a>
+
+        {% if not order.is_paid and order.payment_method == 'stripe' %}
+            <a href="{% url 'orders:stripe_checkout' order.id %}"
+               class="btn btn-success px-4">
+                Pay with Stripe 💳
+            </a>
+        {% elif order.payment_method == 'cod' and not order.is_paid %}
+            <span class="text-muted fst-italic">
+                Cash on Delivery – Pay at delivery
+            </span>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>My Orders</h2>
+
+    {% for order in orders %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>Order #{{ order.id }}</h5>
+            <p>Total: ₹{{ order.total_price }}</p>
+            <p>Status:
+                {% if order.is_paid %}
+                    <span class="badge bg-success">Paid</span>
+                {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                {% endif %}
+            </p>
+            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary btn-sm">
+                View Details
+            </a>
+        </div>
+    </div>
+    {% empty %}
+        <p>No orders yet.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

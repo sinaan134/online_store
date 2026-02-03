@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- Success Header -->
+    <div class="text-center mb-4">
+        <div class="display-4 text-success">✔</div>
+        <h2 class="text-success fw-bold">Payment Successful</h2>
+        <p class="text-muted">
+            Thank you for your purchase! Your order has been confirmed.
+        </p>
+    </div>
+
+    <!-- Order & User Details -->
+    <div class="row g-4">
+
+        <!-- Order Info -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    Order Details
+                </div>
+                <div class="card-body">
+                    <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                    <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+                    <p><strong>Payment Status:</strong>
+                        <span class="badge bg-success">Paid</span>
+                    </p>
+                    <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Info -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    Customer Details
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ order.user.username }}</p>
+                    <p><strong>Email:</strong> {{ order.user.email }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Section -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-primary text-white">
+            Invoice
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Product</th>
+                        <th width="120">Qty</th>
+                        <th width="150">Price</th>
+                        <th width="150">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.price }}</td>
+                        <td>₹{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer text-end">
+            <h5>Total Paid:
+                <span class="text-success fw-bold">
+                    ₹{{ order.total_price }}
+                </span>
+            </h5>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            ← Continue Shopping
+        </a>
+
+        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary">
+            View Order
+        </a>
+    </div>
+
+</div>
+{% endblock %}
